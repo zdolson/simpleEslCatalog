@@ -1,28 +1,14 @@
 ## Requirements
 
-Node v14
-Npm v7
+* Node v14
+* Npm v7
 
-## Commands
+## Instructions
 
 First, be sure to install dependencies with `npm i`.
 
-To run the development server:
+Application should be visible at [http://localhost:3000](http://localhost:3000) in your browser.
 
-```bash
-npm run dev
-```
-
-Visible at [http://localhost:3000](http://localhost:3000) in your browser.
-
-To build the application:
-
-```bash
-npm run build
-```
-
-To start the application in production mode:
-
-```bash
-npm run start
-```
+To run the development server: `npm run dev`
+To build the application: `npm run build`
+To start the application in production mode: `npm run start`

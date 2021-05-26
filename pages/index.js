@@ -12,8 +12,8 @@ export default function Home() {
         <title>ESL Catalog</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Chakra.Box px={10}>
-        <Chakra.Heading as="h1">Home</Chakra.Heading>
+      <Chakra.Box px={10} mt={8} mb={5}>
+        <Chakra.Heading as="h1" align="center">ESL Catalog</Chakra.Heading>
         <Catalog />
       </Chakra.Box>
     </React.Fragment>

@@ -9,8 +9,9 @@ import useCards from "../../hooks/useCards";
 const CatalogLoader = React.memo(function CatalogLoader({
   currentPage,
   maxPage,
-  increaseMaxPage,
   searchQuery,
+  increaseMaxPage,
+  setTotalCount,
 }) {
   const { data, isLoading, isError } = useCards(currentPage, searchQuery);
   const loadMoreRef = React.useRef();
@@ -21,9 +22,20 @@ const CatalogLoader = React.memo(function CatalogLoader({
   });
 
   React.useEffect(() => {
+    /*
+     *  We only care about the value returned by the first function.
+     *  Otherwise, we would temporarily be setting totalResults as undefined
+     *  during fetches.
+     */
+    if (currentPage === 0 && data?.cards) {
+      setTotalCount(data._totalCount);
+    }
+  }, [data, currentPage]);
+
+  React.useEffect(() => {
     const canFetchMoreData = !!data?._links?.next || false;
     const inView = intersection && intersection.intersectionRatio >= 1;
-    /* 
+    /*
      *  Conditions to increase maxPage
      *  1. if current component holds the newest page
      *  2. user is at the bottom of the page, such that ref is interescting with view
@@ -39,9 +51,11 @@ const CatalogLoader = React.memo(function CatalogLoader({
     <React.Fragment>
       {isLoading && <SkeletonCatalog />}
       {data?.cards &&
-        data?.cards.map((card, index) => <Card key={index} data={card} />)}
+        data?.cards.map((card) => <Card key={card?.id} data={card} />)}
       <Chakra.Box
         ref={loadMoreRef}
+        position="absolute"
+        bottom={2.5}
         display={currentPage === maxPage ? "block" : "none"}
       />
     </React.Fragment>
@@ -50,39 +64,66 @@ const CatalogLoader = React.memo(function CatalogLoader({
 
 export default function Catalog() {
   const [maxPage, setMaxPage] = React.useState(0);
+  const [totalCount, setTotalCount] = React.useState();
   const increaseMaxPage = React.useCallback(() => {
-    // console.log(`Increasing max page from ${maxPage} to ${maxPage+1}`);
     setMaxPage(prevMaxPage => prevMaxPage + 1);
   }, [maxPage, setMaxPage])
 
   const [searchQuery, setSearchQuery] = React.useState();
   const [inputValue, setInputValue] = React.useState("");
-  const [isReady, cancel] = useDebounce(
+  const [isReady ] = useDebounce(
     () => {
       setSearchQuery(inputValue);
       setMaxPage(0);
     },
-    1600,
+    1200,
     [inputValue, setSearchQuery]
   );
+  const isFetchAndLoadComplete = typeof totalCount !== undefined && isReady();
 
+  const [gray200] = Chakra.useToken("colors", ["gray.200"])
   return (
-    <Chakra.Box py={5}>
-      <Chakra.Flex align="center" mb={8}>
-        <Chakra.InputGroup>
-          <Chakra.Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Search for a card"
-            variant="flushed"
-          />
-          <Chakra.InputRightElement>
-            {!isReady() && (<Chakra.Spinner color="blue.500" speed="0.6s" label="Loading"/>)}
-          </Chakra.InputRightElement>
-        </Chakra.InputGroup>
+    <Chakra.Box py={5} position="relative">
+      <Chakra.Flex
+        justify="center"
+        direction="column"
+        mb={8}
+        py={5}
+        position="sticky"
+        top={0}
+        bg="white"
+        zIndex="docked"
+        boxShadow={`0px 4px 4px -4px ${gray200}`}
+      >
+        <Chakra.VStack>
+          <Chakra.InputGroup maxW={"xl"}>
+            <Chakra.Input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Search for a card..."
+              variant="flushed"
+              pl={2}
+              color="blue.500"
+              fontWeight="medium"
+              _placeholder={{
+                color: "blue.500"
+              }}
+            />
+            <Chakra.InputRightElement>
+              {!isFetchAndLoadComplete && (
+                <Chakra.Spinner color="blue.500" speed="0.6s" label="Loading" />
+              )}
+            </Chakra.InputRightElement>
+          </Chakra.InputGroup>
+          <Chakra.Text>
+            {!isFetchAndLoadComplete
+              ? "Thinking..."
+              : `Found ${totalCount} ${totalCount === 1 ? "card" : "cards"}`}
+          </Chakra.Text>
+        </Chakra.VStack>
       </Chakra.Flex>
       <Chakra.SimpleGrid
-        columns={[1, 2, 3, 4, 5]}
+        minChildWidth="240px"
         spacingX={[5]}
         spacingY={[6]}
       >
@@ -93,6 +134,7 @@ export default function Catalog() {
             maxPage={maxPage}
             searchQuery={searchQuery}
             increaseMaxPage={increaseMaxPage}
+            setTotalCount={setTotalCount}
           />
         ))}
       </Chakra.SimpleGrid>

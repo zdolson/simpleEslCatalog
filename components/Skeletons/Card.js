@@ -3,7 +3,7 @@ import * as Chakra from "@chakra-ui/react";
 
 export default function SkeletonCard() {
   return (
-    <Chakra.Box p={[2]} maxW={["240px"]}>
+    <Chakra.Box p={[2]} maxW={["240px"]} h="100%" mx="auto">
       <Chakra.SkeletonText noOfLines={1} mb={2} />
       <Chakra.Divider mb={2} />
       <Chakra.Skeleton h="331px" w="200px" mx="auto" />

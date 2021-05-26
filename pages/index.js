@@ -12,7 +12,7 @@ export default function Home() {
         <title>ESL Catalog</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Chakra.Box px={10} mt={8} mb={5}>
+      <Chakra.Box px={10} pt={8} pb={5} bg="white">
         <Chakra.Heading as="h1" align="center">ESL Catalog</Chakra.Heading>
         <Catalog />
       </Chakra.Box>

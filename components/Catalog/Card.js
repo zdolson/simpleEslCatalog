@@ -10,6 +10,7 @@ export default function Card({data}) {
     return () => onToggle();
   }, []);
 
+  const [gray300] = Chakra.useToken("colors", ["gray.300"]);
   return (
     <Chakra.ScaleFade in={isOpen} initialScale={0.9}>
       <Chakra.Flex
@@ -19,7 +20,8 @@ export default function Card({data}) {
         h="100%"
         mx="auto"
         borderRadius="xl"
-        boxShadow="base"
+        bg="white"
+        boxShadow={`0px 1px 6px ${gray300}`}
       >
         <Chakra.Text
           fontWeight="semibold"

@@ -81,19 +81,18 @@ export default function Catalog() {
   );
   const isFetchAndLoadComplete = typeof totalCount !== undefined && isReady();
 
-  const [gray200] = Chakra.useToken("colors", ["gray.200"])
+  const [gray300] = Chakra.useToken("colors", ["gray.300"])
   return (
-    <Chakra.Box py={5} position="relative">
+    <Chakra.Box pt={5} position="relative">
       <Chakra.Flex
         justify="center"
         direction="column"
-        mb={8}
         py={5}
         position="sticky"
         top={0}
         bg="white"
         zIndex="docked"
-        boxShadow={`0px 4px 4px -4px ${gray200}`}
+        boxShadow={`0px 4px 4px -4px ${gray300}`}
       >
         <Chakra.VStack>
           <Chakra.InputGroup maxW={"xl"}>
@@ -106,7 +105,7 @@ export default function Catalog() {
               color="blue.500"
               fontWeight="medium"
               _placeholder={{
-                color: "blue.500"
+                color: "blue.500",
               }}
             />
             <Chakra.InputRightElement>
@@ -126,6 +125,8 @@ export default function Catalog() {
         minChildWidth="240px"
         spacingX={[5]}
         spacingY={[6]}
+        bg={totalCount === 0 ? "white" : "#fbfbfb"}
+        py={8}
       >
         {[...Array(maxPage + 1)].map((emptyValue, index) => (
           <CatalogLoader
